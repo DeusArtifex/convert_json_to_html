@@ -17,22 +17,25 @@ def install_package(package):
 '''
 
 
-def prepare_directory(dir_name = ""):
+def prepare_directory(dir_name="") -> str:
     cwd = dir_name
     if os.path.isdir(cwd):
         return cwd
     else:
-        os.mkdir(cwd)
-        return cwd
+        try:
+            os.mkdir(cwd)
+            return cwd
+        except:
+            print("Error while creating a directory")
 
 
-def load_json(json_to_load):
+def load_json(json_to_load: str) -> dict:
     with open(json_to_load, "r") as json_file:
         loaded_json = json.load(json_file)
     return loaded_json
 
 
-def generate_name(json_name, output_dir, force):
+def generate_name(json_name: str, output_dir: str, force: bool) -> str:
     match = re.match(r"(.*).json", json_name)
     count = 1
     html_name = match.group(1) + ".html"
@@ -55,17 +58,19 @@ def parse_args():
 
     return args
 
-#converter = install_package("json2html")
+
+# converter = install_package("json2html")
 
 
-args = parse_args()
+if __name__ == "__main__":
+    args = parse_args()
 
-cwd = prepare_directory(args.dir)
-json_to_convert = load_json(args.json)
-json_name = os.path.basename(args.json)
-html_name = generate_name(json_name, cwd, args.force)
+    cwd = prepare_directory(args.dir)
+    json_to_convert = load_json(args.json)
+    json_name = os.path.basename(args.json)
+    html_name = generate_name(json_name, cwd, args.force)
 
 
-with open(os.path.join(cwd, html_name), "w", encoding="utf-8") as html_file:
-    print("Saving tool output to: %s" % cwd + "\\" + html_name)
-    html_file.write(json2html.convert(json = json_to_convert))
+    with open(os.path.join(cwd, html_name), "w", encoding="utf-8") as html_file:
+        print("Saving tool output to: %s" % cwd + "\\" + html_name)
+        html_file.write(json2html.convert(json = json_to_convert))
